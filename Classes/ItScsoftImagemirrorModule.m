@@ -12,7 +12,7 @@
 
 @implementation ItScsoftImagemirrorModule
 
-@synthesize image;
+@synthesize image = _image;
 
 #pragma mark Internal
 
@@ -90,9 +90,28 @@
     TiBlob *blob = [source objectForKey:@"image"];
     NSLog(@"[INFO] blobimg; %@",blob);
     
-    image = [[UIImage alloc] initWithData:[blob data]];
-    UIImage *newImage = [image horizontalFlip];
+    _image = [[UIImage alloc] initWithData:[blob data]];
+    UIImage *newImage = [_image horizontalFlip];
     return [[TiBlob alloc] initWithImage:newImage];
+}
+
+-(TiBlob *)addWaterMark:(id)source
+{
+    ENSURE_SINGLE_ARG(source, NSDictionary);
+    TiBlob *blob = [source objectForKey:@"image"];
+    //MAIN IMAGE
+    _image = [[UIImage alloc] initWithData:[blob data]];
+    //WATERMARK
+    UIImage *watermarkImage = [UIImage imageNamed:[TiUtils stringValue:@"watermark" properties:source]];
+    
+    UIGraphicsBeginImageContext(_image.size);
+	[_image drawInRect:CGRectMake(0, 0, _image.size.width, _image.size.height)];
+
+    [watermarkImage drawInRect:CGRectMake(_image.size.width - watermarkImage.size.width, _image.size.height - watermarkImage.size.height, watermarkImage.size.width, watermarkImage.size.height)];
+    //[watermarkImage drawInRect:CGRectMake(100, 300, 400, 50)];
+    UIImage *result = UIGraphicsGetImageFromCurrentImageContext();
+	UIGraphicsEndImageContext();
+    return [[TiBlob alloc] initWithImage:result];
 }
 
 @end

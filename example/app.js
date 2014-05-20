@@ -18,6 +18,16 @@ Ti.API.info("module is => " + ImageMirror);
 
 label.text = ImageMirror.example();
 
+
+
+var imgbloob = Ti.Filesystem.getFile('prova.jpg');
+
+var imgTest = ImageMirror.addWaterMark({
+   image: imgbloob.read(),
+   watermark:'water.png'
+});
+
+
 Ti.API.info("module exampleProp is => " + ImageMirror.exampleProp);
 ImageMirror.exampleProp = "This is a test value";
 
